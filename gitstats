@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+from sys import argv
+import json
+from cli_badges import badge
+import requests
+
+if not argv[1]:
+    print("No Repository Name Found")
+    exit()
+
+data = requests.get("https://api.github.com/repos/"+argv[1]).json()
+
+name = data["name"]
+owner = data["owner"]["login"]
+description = data["description"]
+stars = data["stargazers_count"]
+language = data["language"]
+issues = data["open_issues"]
+forks = data["forks"]
+watchers = data["subscribers_count"]
+
+print(badge(owner,name,labelbg='light_red',messagebg='dark_gray',labelstyles=['bold']),badge(language,labelbg='turquoise_4'))
+print(description)
+print(badge('Stars',stars,labelbg='black',messagebg='red'),
+      badge('Forks',forks,labelbg='black',messagebg='green'),
+      badge("Watchers",watchers,labelbg='black',messagebg='magenta'),
+      badge("Issues",issues,labelbg='black',messagebg='blue'))

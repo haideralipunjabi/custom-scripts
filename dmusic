@@ -1,0 +1,77 @@
+#!/home/haideralipunjabi/.pyenv/versions/3.8-dev/bin/python
+import youtube_dl
+import os
+from sys import argv
+from mutagen.mp3 import MP3
+from mutagen.id3 import ID3, APIC, error, TIT2, TPE1, TALB
+import json
+import requests
+from PIL import Image
+url = input("Video URL: ")
+filename = ""
+
+
+def hook(d):
+    if d['status'] == 'finished':
+        global filename
+        filename = d['filename']
+        filename = os.path.splitext(filename)[0]
+
+
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'writeinfojson': 'output.json',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'progress_hooks': [hook],
+}
+with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    ydl.download([url])
+
+os.rename(filename+".mp3", "output.mp3")
+os.rename(filename+".info.json", "info.json")
+audio = MP3("output.mp3", ID3=ID3)
+data = json.load(open("info.json", "r"))
+
+try:
+    audio.add_tags()
+except error:
+    pass
+
+title = input(f"Title ({data['title']}): ")
+artist = input(f"Artist ({data['uploader']}): ")
+album = input("Album: ")
+if not title:
+    title = data["title"]
+if not artist:
+    artist = data["uploader"]
+
+audio.tags.add(TIT2(text=title))
+audio.tags.add(TPE1(text=artist))
+audio.tags.add(TALB(text=album))
+
+iurl = input("Image URL: ")
+if not iurl:
+    iurl = data["thumbnails"][-1]["url"]
+
+r = requests.get(iurl)
+open("albumart", "wb").write(r.content)
+mime = r.headers["Content-Type"]
+if mime == "image/webp":
+    im = Image.open("albumart").convert("RGB")
+    im.save("albumart", "jpeg")
+    mime = "image/jpeg"
+
+audio.tags.add(APIC(mime=mime, type=3, desc=u'Cover',
+                    data=open("albumart", 'rb').read()))
+audio.save()
+
+filename = f"{artist}-{title}-{album}.mp3"
+os.rename("output.mp3", filename)
+os.remove("info.json")
+os.remove("albumart")
+os.system(f"mv '{filename}' ~/Music/")
+

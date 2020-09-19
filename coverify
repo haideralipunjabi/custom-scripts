@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import os
+import sys
+from functools import reduce
+data = sys.argv[1]
+rows = data.split("\n")
+heads = rows[0].split("\t")[1:]
+cols = rows[1].split("\t")[1:]
+data = {}
+for i in range(len(heads)):
+	data[heads[i]] = [int(x) for x in cols[i].split(",")]
+for k,v in data.items():
+	if v[0] != v[1] + v[2] + v[3]:
+		print(k)
+		break
+print(reduce(lambda x,y: [x[0]+y[0],x[1]+y[1],x[2]+y[2],x[3]+y[3]],list(data.values())))
+
+

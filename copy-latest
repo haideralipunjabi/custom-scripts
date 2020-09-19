@@ -1,0 +1,2 @@
+f=$(ls -t1 /home/haideralipunjabi/Downloads | head -n 1)
+cp /home/haideralipunjabi/Downloads/"$f" "$1"

@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import os
+import sys
+date = sys.argv[1]
+link = sys.argv[2]
+districts = ["Srinagar","Baramulla","Kulgam","Shopian","Anantnag","Kupwara","Pulwama","Budgam","Bandipora","Ganderbal","Jammu","Udhampur","Kathua","Ramban","Rajouri","Samba","Poonch","Doda","Reasi","Kishtwar"]
+string = ""
+for i,district in enumerate(districts):
+	region = "Kashmir" if i < 10 else "Jammu" 
+	os.system("clear")
+	num=0
+	trav=0
+	ntrav=0
+	print(district)
+	try:
+		num = int(input("Enter Number: "))
+	except:
+		pass
+	try:
+		trav = int(input("Enter Traveler: "))
+	except:
+		pass
+	ntrav= num - trav
+	if trav != 0:
+		for i in range(trav):
+			string+=f"{date}\t{region}\t{district}\t{district}\t\t\t\tTraveler\t\t\t{link}\tHospitalized\n"
+	if ntrav != 0:
+		for i in range(ntrav):
+			string+=f"{date}\t{region}\t{district}\t{district}\t\t\t\t\t\t\t{link}\tHospitalized\n"
+os.system(f'echo -e "{string}" | xclip -selection c')

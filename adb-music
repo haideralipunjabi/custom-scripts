@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+import os
+import sys
+source = sys.argv[1]
+os.system(f'adb push "/home/haideralipunjabi/Music/{source}" "/storage/880E-1C0B/Music/{source}"')
+os.system(
+    f"""adb shell 'am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///storage/880E-1C0B/Music/{source}"'""")

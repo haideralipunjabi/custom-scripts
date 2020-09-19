@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+exiftool -s -s -s "$1" -imagesize | xclip -selection c

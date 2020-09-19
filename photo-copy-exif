@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+file="$1"
+model="$(exiftool -s -s -s $file -exif:model)"
+shutter="$(exiftool -s -s -s $file -exif:shutterspeedvalue)"
+fnumber="$(exiftool -s -s -s $file -exif:fnumber)"
+iso="$(exiftool -s -s -s $file -exif:iso)"
+
+
+echo -e "Model: $model\nShutter Speed: $shutter\nAperture: $fnumber\nISO: $iso" | xclip -selection c
